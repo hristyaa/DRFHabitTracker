@@ -4,7 +4,8 @@ from django.db import models
 
 # Create your models here.
 class User(AbstractUser):
-    """ Модель пользователя. Электронная почта является полем для авторизации"""
+    """Модель пользователя. Электронная почта является полем для авторизации"""
+
     username = None
 
     email = models.EmailField(
