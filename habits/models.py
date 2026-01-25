@@ -65,7 +65,7 @@ class Habit(models.Model):
     )
     lasting = models.PositiveIntegerField(
         verbose_name="Время на выполнение",
-        help_text="Укажите предположительное время на выполнение привычки в минутах",
+        help_text="Укажите предположительное время на выполнение привычки в секундах",
     )
     is_public = models.BooleanField(
         default=False,
