@@ -21,11 +21,11 @@ class Habit(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.CASCADE,  # удалили пользователя - удалились все его привычки
         verbose_name="Пользователь",
         help_text="Укажите пользователя (создателя привычки)",
         related_name="habits",
-    )  # удалили пользователя - удалились все его привычки
+    )
     place = models.CharField(
         max_length=100,
         verbose_name="Место",

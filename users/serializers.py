@@ -6,4 +6,7 @@ from users.models import User
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = "__all__"
+        fields = ["id", "email", "password", "phone", "tg_nick", "avatar"]
+        extra_kwargs = {
+            "password": {"write_only": True}
+        }  # пароль не выводит в ответах, можно только написать
