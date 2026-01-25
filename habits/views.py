@@ -9,3 +9,7 @@ class HabitViewSet(ModelViewSet):
 
     queryset = Habit.objects.all()
     serializer_class = HabitSerializer
+
+    def perform_create(self, serializer):
+        """Пользователь = создатель привычки"""
+        serializer.save(user=self.request.user)
