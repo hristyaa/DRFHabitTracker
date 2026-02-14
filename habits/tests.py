@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase
 from habits.models import Habit
 from users.models import User
 
-
 # Create your tests here.
 
 
