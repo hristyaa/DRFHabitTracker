@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase
 from habits.models import Habit
 from users.models import User
 
+
 # Create your tests here.
 
 
@@ -20,6 +21,7 @@ class HabitTestCase(APITestCase):
             action="Пить теплую воду",
             reward="Час просмотра любимого сериала",
             lasting=30,
+            is_public=True,
         )
         self.habit_2 = Habit.objects.create(
             user=self.user, place="test", time="08:00:00", action="test", lasting=30
@@ -107,47 +109,79 @@ class HabitTestCase(APITestCase):
         url = reverse("habits:habit-list")
         response = self.client.get(url)
         data = response.json()
-        result = [
-            {
-                "id": self.habit.id,
-                "place": self.habit.place,
-                "time": self.habit.time,
-                "action": self.habit.action,
-                "is_nice": False,
-                "periodicity": self.habit.periodicity,
-                "reward": self.habit.reward,
-                "lasting": self.habit.lasting,
-                "is_public": False,
-                "user": self.user.id,
-                "related_habit": None,
-            },
-            {
-                "id": self.habit_2.id,
-                "place": self.habit_2.place,
-                "time": self.habit_2.time,
-                "action": self.habit_2.action,
-                "is_nice": False,
-                "periodicity": self.habit_2.periodicity,
-                "reward": "",
-                "lasting": self.habit_2.lasting,
-                "is_public": False,
-                "user": self.user.id,
-                "related_habit": None,
-            },
-            {
-                "id": self.related_habit.id,
-                "place": self.related_habit.place,
-                "time": self.related_habit.time,
-                "action": self.related_habit.action,
-                "is_nice": self.related_habit.is_nice,
-                "periodicity": self.related_habit.periodicity,
-                "reward": "",
-                "lasting": self.related_habit.lasting,
-                "is_public": False,
-                "user": self.user.id,
-                "related_habit": None,
-            },
-        ]
+        result = {
+            "count": 3,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.habit.id,
+                    "place": self.habit.place,
+                    "time": self.habit.time,
+                    "action": self.habit.action,
+                    "is_nice": False,
+                    "periodicity": self.habit.periodicity,
+                    "reward": self.habit.reward,
+                    "lasting": self.habit.lasting,
+                    "is_public": self.habit.is_public,
+                    "user": self.user.id,
+                    "related_habit": None,
+                },
+                {
+                    "id": self.habit_2.id,
+                    "place": self.habit_2.place,
+                    "time": self.habit_2.time,
+                    "action": self.habit_2.action,
+                    "is_nice": False,
+                    "periodicity": self.habit_2.periodicity,
+                    "reward": "",
+                    "lasting": self.habit_2.lasting,
+                    "is_public": False,
+                    "user": self.user.id,
+                    "related_habit": None,
+                },
+                {
+                    "id": self.related_habit.id,
+                    "place": self.related_habit.place,
+                    "time": self.related_habit.time,
+                    "action": self.related_habit.action,
+                    "is_nice": self.related_habit.is_nice,
+                    "periodicity": self.related_habit.periodicity,
+                    "reward": "",
+                    "lasting": self.related_habit.lasting,
+                    "is_public": False,
+                    "user": self.user.id,
+                    "related_habit": None,
+                },
+            ],
+        }
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(data, result)
 
+    def test_public_habit_list(self):
+        """Тестирование просмотра списка публичных привычек"""
+        url = reverse("habits:public_habits_list")
+        response = self.client.get(url)
+        data = response.json()
+        result = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.habit.id,
+                    "place": self.habit.place,
+                    "time": self.habit.time,
+                    "action": self.habit.action,
+                    "is_nice": False,
+                    "periodicity": self.habit.periodicity,
+                    "reward": self.habit.reward,
+                    "lasting": self.habit.lasting,
+                    "is_public": self.habit.is_public,
+                    "user": self.user.id,
+                    "related_habit": None,
+                }
+            ],
+        }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data, result)
