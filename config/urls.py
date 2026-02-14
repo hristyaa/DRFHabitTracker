@@ -21,7 +21,6 @@ from drf_yasg import openapi
 from django.contrib import admin
 from django.urls import include, path
 
-
 schema_view = get_schema_view(
     openapi.Info(
         title="DRFHabitTracker API Documentation",
