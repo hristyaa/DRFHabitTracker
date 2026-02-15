@@ -95,7 +95,6 @@ jobs:
   deploy: #деплой на сервер
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
 
     steps:
       - name: Set up SSH #настройка  SSH для подключения к серверу
