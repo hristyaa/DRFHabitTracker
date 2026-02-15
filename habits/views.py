@@ -15,7 +15,14 @@ class HabitViewSet(ModelViewSet):
     pagination_class = CustomPagination
 
     def get_queryset(self):
-        return Habit.objects.filter(user=self.request.user)
+        if getattr(self, "swagger_fake_view", False):
+            return Habit.objects.none()
+
+        user = self.request.user
+        if not user.is_authenticated:
+            return Habit.objects.none()
+
+        return Habit.objects.filter(user=user)
 
     def perform_create(self, serializer):
         """Пользователь = создатель привычки"""
