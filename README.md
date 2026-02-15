@@ -1,5 +1,8 @@
 # Habit Tracker
 
+## Адрес развернутого приложения:
+Приложение доступно по адресу: `http://158.160.224.149/`
+
 ## Описание:
 **DRFHabitTracker** - это backend-приложение для отслеживания полезных привычек с системой напоминаний через Telegram-bot.
 Проект реализован на Django REST Framework и поддерживает отложенные задачи через Celery.
@@ -105,7 +108,6 @@ python manage.py migrate
 ```
 redis-server
 ```
-
 ### Запуск локального сервера
 ```
 python manage.py runserver
@@ -125,6 +127,45 @@ celery -A config beat -l info
 
 Swagger доступен по адресу:
 `http://127.0.0.1:8000/swagger/`
+
+### Запуск проект локально (Docker - одной командой)
+```
+docker compose up -d --build
+```
+## CI/CD (GitHub Actions) 
+Workflow настроен в `.github/workflows/ci.yml.`
+### Настройка GitHub Actions
+#### 1. Добавление секретов в GitHub
+В репозитории перейдите в Settings -> Secrets and variables -> Actions и добавьте:
+- `SERVER_IP`: IP адрес вашего сервера
+- `SSH_USER`: имя пользователя на сервере
+- `SSH_KEY`: содержимое приватного SSH ключа (id_rsa)
+- `DOCKER_HUB_USERNAME`: имя пользователя на Docker Hub
+- `DOCKER_HUB_ACCESS_TOKEN`: токкен на Docker Hub
+- `DJANGO_SECRET_KEY`: секретный ключ Django
+- `DB_PASSWORD`: пароль от базы данных
+
+#### 2. Workflow
+- Файл `.github/workflows/ci.yml`.
+- Workflow запускается автоматически при push в ветку feature/task_2 или develop и создании pull request в ветку develop
+- Также workflow можно запустить вручную:
+GitHub → Actions → выбрать workflow → Run workflow
+
+#### Этапы workflow:
+1. Lint (проверка кода) - устанавливается Python 3.13, flake8 и запускается линтер
+2. Test (запуск тестов) - используется PostgreSQL 16 (как сервис в GitHub Actions), Poetry для управления зависимостями
+3. Build (сборка Docker-образа) - Выполняется авторизация в Docker Hub, собирается Docker-образ приложения, Образ отправляется в Docker Hub
+4. Deploy (деплой на удалённый сервер):
+- Подключение к серверу по SSH
+- Переход в директорию проекта: `cd ~/projects/DRFHabitTracker`
+- Переключение на ветку feature/task_2
+- Обновление кода: `git pull origin feature/task_2`
+- Остановка контейнеров: `docker compose down`
+- Пересборка и запуск контейнеров: `docker compose up -d --build`
+- Применение миграций: `docker compose exec backend python manage.py migrate`
+
+Реализован полный CI/CD процесс.
+
 
 ## Тестирование:
 
